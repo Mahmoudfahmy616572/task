@@ -11,6 +11,7 @@ abstract final class AppLocalizations {
   static const Map<String, Map<String, String>> _localized = {
     'en': {
       'addComment': 'Add a comment...',
+      'postTitle': 'Post',
       'likes': 'likes',
       'comments': 'comments',
       'retry': 'Retry',
@@ -19,6 +20,7 @@ abstract final class AppLocalizations {
     },
     'ar': {
       'addComment': 'أضف تعليقاً...',
+      'postTitle': 'المنشور',
       'likes': 'إعجاب',
       'comments': 'تعليقات',
       'retry': 'إعادة المحاولة',

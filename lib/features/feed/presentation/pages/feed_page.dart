@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/context_extensions.dart';
@@ -25,18 +26,10 @@ class FeedPage extends StatefulWidget {
 class _FeedPageState extends State<FeedPage> {
   final GlobalKey<CommentInputState> _commentInputKey =
       GlobalKey<CommentInputState>();
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToCommentInput() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _commentInputKey.currentState?.requestFocus();
-    });
   }
 
   @override
@@ -55,16 +48,16 @@ class _FeedPageState extends State<FeedPage> {
               scrolledUnderElevation: 0,
               automaticallyImplyLeading: false,
               toolbarHeight: 48.h,
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    Icons.chat_bubble_outline_rounded,
-                    size: 22.sp,
-                    color: AppColors.textPrimary,
-                  ),
-                  onPressed: _scrollToCommentInput,
+              title: Text(
+                AppLocalizations.get('postTitle', isArabic ? 'ar' : 'en'),
+                style: TextStyle(
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
-                4.horizontalSpace,
+              ),
+              centerTitle: true,
+              actions: [
                 IconButton(
                   icon: Icon(
                     Icons.language_rounded,
@@ -124,7 +117,6 @@ class _FeedPageState extends State<FeedPage> {
                   return _FeedContent(
                     state: state,
                     commentInputKey: _commentInputKey,
-                    scrollController: _scrollController,
                     isArabic: isArabic,
                   );
                 }
@@ -142,13 +134,11 @@ class _FeedPageState extends State<FeedPage> {
 class _FeedContent extends StatelessWidget {
   final FeedLoaded state;
   final GlobalKey<CommentInputState> commentInputKey;
-  final ScrollController scrollController;
   final bool isArabic;
 
   const _FeedContent({
     required this.state,
     required this.commentInputKey,
-    required this.scrollController,
     required this.isArabic,
   });
 
@@ -162,7 +152,6 @@ class _FeedContent extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            controller: scrollController,
             padding: EdgeInsets.only(top: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,6 +166,9 @@ class _FeedContent extends StatelessWidget {
                   onLikeTap: () => cubit.toggleLike(),
                   onCommentTap: () {
                     commentInputKey.currentState?.requestFocus();
+                  },
+                  onShareTap: () {
+                    Share.share(post.text);
                   },
                 ),
                 Padding(

@@ -11,6 +11,7 @@ class ActionRow extends StatelessWidget {
   final int commentsCount;
   final VoidCallback onLikeTap;
   final VoidCallback onCommentTap;
+  final VoidCallback onShareTap;
 
   const ActionRow({
     super.key,
@@ -20,6 +21,7 @@ class ActionRow extends StatelessWidget {
     required this.commentsCount,
     required this.onLikeTap,
     required this.onCommentTap,
+    required this.onShareTap,
   });
 
   @override
@@ -56,6 +58,16 @@ class ActionRow extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          24.horizontalSpace,
+          GestureDetector(
+            onTap: onShareTap,
+            behavior: HitTestBehavior.opaque,
+            child: Icon(
+              Icons.ios_share_rounded,
+              size: 22.sp,
+              color: AppColors.textSecondary,
             ),
           ),
         ],
