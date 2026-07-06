@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
@@ -14,6 +15,16 @@ class PostHeader extends StatelessWidget {
     required this.username,
     required this.subtitle,
   });
+
+  String _formatDate(BuildContext context) {
+    try {
+      final date = DateTime.parse(subtitle);
+      final locale = Localizations.localeOf(context).languageCode;
+      return DateFormat.yMMMMd(locale).format(date);
+    } catch (_) {
+      return subtitle;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +53,7 @@ class PostHeader extends StatelessWidget {
                 ),
                 2.verticalSpace,
                 Text(
-                  subtitle,
+                  _formatDate(context),
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,

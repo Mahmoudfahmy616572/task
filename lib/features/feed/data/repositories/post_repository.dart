@@ -13,7 +13,7 @@ class PostRepository {
 
     const initial = PostModel(
       username: 'johndoe',
-      subtitle: 'San Francisco, CA',
+      subtitle: '2026-07-06T15:30:00.000',
       text:
           'Golden hour at the pier. Absolutely breathtaking views today! '
           'The weather was perfect for a long walk along the water. '
