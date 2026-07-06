@@ -17,6 +17,7 @@ class CommentRepository {
 
   Future<CommentModel> addComment({
     required int postId,
+    int? parentId,
     required String username,
     required String text,
   }) async {
@@ -24,6 +25,7 @@ class CommentRepository {
 
     final comment = CommentModel(
       postId: postId,
+      parentId: parentId,
       username: username,
       text: text,
       avatarUrl: 'assets/task.jpeg',
@@ -32,5 +34,45 @@ class CommentRepository {
 
     final id = await db.insert('comments', comment.toMap());
     return comment.copyWith(id: id);
+  }
+
+  Future<CommentModel> toggleCommentLike(CommentModel comment) async {
+    final db = await DatabaseHelper.database;
+
+    final updated = comment.copyWith(
+      isLiked: !comment.isLiked,
+      likesCount: comment.isLiked
+          ? (comment.likesCount - 1).clamp(0, double.infinity).toInt()
+          : comment.likesCount + 1,
+      isDisliked: comment.isDisliked ? false : comment.isDisliked,
+      dislikesCount: comment.isDisliked
+          ? (comment.dislikesCount - 1).clamp(0, double.infinity).toInt()
+          : comment.dislikesCount,
+    );
+
+    await db.update('comments', updated.toMap(),
+        where: 'id = ?', whereArgs: [comment.id]);
+
+    return updated;
+  }
+
+  Future<CommentModel> toggleCommentDislike(CommentModel comment) async {
+    final db = await DatabaseHelper.database;
+
+    final updated = comment.copyWith(
+      isDisliked: !comment.isDisliked,
+      dislikesCount: comment.isDisliked
+          ? (comment.dislikesCount - 1).clamp(0, double.infinity).toInt()
+          : comment.dislikesCount + 1,
+      isLiked: comment.isLiked ? false : comment.isLiked,
+      likesCount: comment.isLiked
+          ? (comment.likesCount - 1).clamp(0, double.infinity).toInt()
+          : comment.likesCount,
+    );
+
+    await db.update('comments', updated.toMap(),
+        where: 'id = ?', whereArgs: [comment.id]);
+
+    return updated;
   }
 }

@@ -45,7 +45,7 @@ class FeedCubit extends Cubit<FeedState> {
     }
   }
 
-  Future<void> addComment(String text) async {
+  Future<void> addComment(String text, {int? parentId}) async {
     final current = state;
     if (current is! FeedLoaded) return;
 
@@ -57,23 +57,67 @@ class FeedCubit extends Cubit<FeedState> {
     try {
       final comment = await _commentRepository.addComment(
         postId: current.post.id!,
+        parentId: parentId,
         username: 'johndoe',
         text: trimmed,
       );
 
-      await _postRepository.incrementCommentsCount(current.post.id!);
+      if (parentId == null) {
+        await _postRepository.incrementCommentsCount(current.post.id!);
 
-      final updatedPost = current.post.copyWith(
-        commentsCount: current.post.commentsCount + 1,
-      );
+        final updatedPost = current.post.copyWith(
+          commentsCount: current.post.commentsCount + 1,
+        );
 
-      emit(current.copyWith(
-        post: updatedPost,
-        comments: [...current.comments, comment],
-        isSubmitting: false,
-      ));
+        emit(current.copyWith(
+          post: updatedPost,
+          comments: [...current.comments, comment],
+          isSubmitting: false,
+        ));
+      } else {
+        emit(current.copyWith(
+          comments: [...current.comments, comment],
+          isSubmitting: false,
+        ));
+      }
     } catch (e) {
       emit(current.copyWith(isSubmitting: false));
     }
+  }
+
+  Future<void> toggleCommentLike(int commentId) async {
+    final current = state;
+    if (current is! FeedLoaded) return;
+
+    final index = current.comments.indexWhere((c) => c.id == commentId);
+    if (index == -1) return;
+
+    try {
+      final updated =
+          await _commentRepository.toggleCommentLike(current.comments[index]);
+
+      final updatedComments = [...current.comments];
+      updatedComments[index] = updated;
+
+      emit(current.copyWith(comments: updatedComments));
+    } catch (_) {}
+  }
+
+  Future<void> toggleCommentDislike(int commentId) async {
+    final current = state;
+    if (current is! FeedLoaded) return;
+
+    final index = current.comments.indexWhere((c) => c.id == commentId);
+    if (index == -1) return;
+
+    try {
+      final updated =
+          await _commentRepository.toggleCommentDislike(current.comments[index]);
+
+      final updatedComments = [...current.comments];
+      updatedComments[index] = updated;
+
+      emit(current.copyWith(comments: updatedComments));
+    } catch (_) {}
   }
 }
