@@ -9,11 +9,13 @@ import '../../../../core/widgets/avatar_widget.dart';
 class CommentInput extends StatefulWidget {
   final bool isSubmitting;
   final ValueChanged<String> onSend;
+  final String hintText;
 
   const CommentInput({
     super.key,
     required this.isSubmitting,
     required this.onSend,
+    this.hintText = 'Add a comment...',
   });
 
   @override
@@ -91,7 +93,7 @@ class CommentInputState extends State<CommentInput> {
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Add a comment...',
+                  hintText: widget.hintText,
                   hintStyle: TextStyle(
                     fontSize: 13.sp,
                     color: AppColors.textHint,

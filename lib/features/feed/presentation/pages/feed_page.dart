@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/context_extensions.dart';
+import '../../../../core/localization/app_localizations.dart';
+import '../../../../core/localization/locale_cubit.dart';
+import '../../../../core/localization/locale_state.dart';
 import '../../data/models/comment_model.dart';
 import '../cubit/feed_cubit.dart';
 import '../cubit/feed_state.dart';
@@ -12,72 +15,125 @@ import '../widgets/comment_input.dart';
 import '../widgets/comment_tile.dart';
 import '../widgets/post_card.dart';
 
-class FeedPage extends StatelessWidget {
+class FeedPage extends StatefulWidget {
+  const FeedPage({super.key});
+
+  @override
+  State<FeedPage> createState() => _FeedPageState();
+}
+
+class _FeedPageState extends State<FeedPage> {
   final GlobalKey<CommentInputState> _commentInputKey =
       GlobalKey<CommentInputState>();
+  final ScrollController _scrollController = ScrollController();
 
-  FeedPage({super.key});
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToCommentInput() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _commentInputKey.currentState?.requestFocus();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => context.dismissKeyboard(),
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: SafeArea(
-          child: BlocBuilder<FeedCubit, FeedState>(
-            builder: (context, state) {
-              if (state is FeedLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+      child: BlocBuilder<LocaleCubit, LocaleState>(
+        builder: (context, localeState) {
+          final isArabic = localeState.isArabic;
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              backgroundColor: AppColors.background,
+              surfaceTintColor: AppColors.background,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              automaticallyImplyLeading: false,
+              toolbarHeight: 48.h,
+              actions: [
+                IconButton(
+                  icon: Icon(
+                    Icons.chat_bubble_outline_rounded,
+                    size: 22.sp,
+                    color: AppColors.textPrimary,
+                  ),
+                  onPressed: _scrollToCommentInput,
+                ),
+                4.horizontalSpace,
+                IconButton(
+                  icon: Icon(
+                    Icons.language_rounded,
+                    size: 22.sp,
+                    color: AppColors.textPrimary,
+                  ),
+                  onPressed: () {
+                    context.read<LocaleCubit>().toggle();
+                  },
+                ),
+                8.horizontalSpace,
+              ],
+            ),
+            body: BlocBuilder<FeedCubit, FeedState>(
+              builder: (context, state) {
+                if (state is FeedLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-              if (state is FeedError) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.w),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline_rounded,
-                          size: 48.sp,
-                          color: AppColors.textSecondary,
-                        ),
-                        16.verticalSpace,
-                        Text(
-                          state.message,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14.sp,
+                if (state is FeedError) {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24.w),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline_rounded,
+                            size: 48.sp,
                             color: AppColors.textSecondary,
                           ),
-                        ),
-                        16.verticalSpace,
-                        FilledButton.tonal(
-                          onPressed: () {
-                            context.read<FeedCubit>().loadFeed();
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
+                          16.verticalSpace,
+                          Text(
+                            state.message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          16.verticalSpace,
+                          FilledButton.tonal(
+                            onPressed: () {
+                              context.read<FeedCubit>().loadFeed();
+                            },
+                            child: Text(AppLocalizations.get('retry', isArabic ? 'ar' : 'en')),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              if (state is FeedLoaded) {
-                return _FeedContent(
-                  state: state,
-                  commentInputKey: _commentInputKey,
-                );
-              }
+                if (state is FeedLoaded) {
+                  return _FeedContent(
+                    state: state,
+                    commentInputKey: _commentInputKey,
+                    scrollController: _scrollController,
+                    isArabic: isArabic,
+                  );
+                }
 
-              return const SizedBox.shrink();
-            },
-          ),
-        ),
+                return const SizedBox.shrink();
+              },
+            ),
+          );
+        },
       ),
     );
   }
@@ -86,10 +142,14 @@ class FeedPage extends StatelessWidget {
 class _FeedContent extends StatelessWidget {
   final FeedLoaded state;
   final GlobalKey<CommentInputState> commentInputKey;
+  final ScrollController scrollController;
+  final bool isArabic;
 
   const _FeedContent({
     required this.state,
     required this.commentInputKey,
+    required this.scrollController,
+    required this.isArabic,
   });
 
   @override
@@ -102,6 +162,7 @@ class _FeedContent extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
+            controller: scrollController,
             padding: EdgeInsets.only(top: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,6 +203,7 @@ class _FeedContent extends StatelessWidget {
         CommentInput(
           key: commentInputKey,
           isSubmitting: state.isSubmitting,
+          hintText: AppLocalizations.get('addComment', isArabic ? 'ar' : 'en'),
           onSend: (text) => cubit.addComment(text),
         ),
       ],
