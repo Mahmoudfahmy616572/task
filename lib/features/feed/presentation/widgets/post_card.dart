@@ -23,7 +23,7 @@ class PostCard extends StatelessWidget {
         12.verticalSpace,
         PostTextWidget(text: post.text),
         16.verticalSpace,
-        PostImage(imageUrl: post.imageUrl),
+        Center(child: PostImage(imageUrl: post.imageUrl)),
       ],
     );
   }

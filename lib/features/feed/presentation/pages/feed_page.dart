@@ -48,11 +48,23 @@ class _FeedPageState extends State<FeedPage> {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
-              backgroundColor: AppColors.background,
-              surfaceTintColor: AppColors.background,
+              backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
               elevation: 0,
               scrolledUnderElevation: 0,
               automaticallyImplyLeading: false,
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFF7F5F2),
+                      Color(0xFFFFFFFF),
+                    ],
+                  ),
+                ),
+              ),
               toolbarHeight: 48.h,
               title: Text(
                 AppLocalizations.get('postTitle', isArabic ? 'ar' : 'en'),
