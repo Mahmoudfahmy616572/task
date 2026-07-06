@@ -26,10 +26,16 @@ class FeedPage extends StatefulWidget {
 class _FeedPageState extends State<FeedPage> {
   final GlobalKey<CommentInputState> _commentInputKey =
       GlobalKey<CommentInputState>();
+  CommentModel? _replyingTo;
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _onReplyTap(CommentModel comment) {
+    setState(() => _replyingTo = comment);
+    _commentInputKey.currentState?.requestFocus();
+  }
+
+  void _cancelReply() {
+    setState(() => _replyingTo = null);
+    _commentInputKey.currentState?.clear();
   }
 
   @override
@@ -105,7 +111,8 @@ class _FeedPageState extends State<FeedPage> {
                             onPressed: () {
                               context.read<FeedCubit>().loadFeed();
                             },
-                            child: Text(AppLocalizations.get('retry', isArabic ? 'ar' : 'en')),
+                            child: Text(AppLocalizations.get(
+                                'retry', isArabic ? 'ar' : 'en')),
                           ),
                         ],
                       ),
@@ -118,6 +125,9 @@ class _FeedPageState extends State<FeedPage> {
                     state: state,
                     commentInputKey: _commentInputKey,
                     isArabic: isArabic,
+                    replyingTo: _replyingTo,
+                    onReplyTap: _onReplyTap,
+                    onCancelReply: _cancelReply,
                   );
                 }
 
@@ -135,18 +145,33 @@ class _FeedContent extends StatelessWidget {
   final FeedLoaded state;
   final GlobalKey<CommentInputState> commentInputKey;
   final bool isArabic;
+  final CommentModel? replyingTo;
+  final ValueChanged<CommentModel> onReplyTap;
+  final VoidCallback onCancelReply;
 
   const _FeedContent({
     required this.state,
     required this.commentInputKey,
     required this.isArabic,
+    required this.replyingTo,
+    required this.onReplyTap,
+    required this.onCancelReply,
   });
+
+  List<CommentModel> _topLevelComments(List<CommentModel> all) {
+    return all.where((c) => c.isTopLevel).toList();
+  }
+
+  List<CommentModel> _repliesOf(CommentModel comment, List<CommentModel> all) {
+    return all.where((r) => r.parentId == comment.id).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<FeedCubit>();
     final post = state.post;
-    final comments = state.comments;
+    final allComments = state.comments;
+    final topComments = _topLevelComments(allComments);
 
     return Column(
       children: [
@@ -181,10 +206,15 @@ class _FeedContent extends StatelessWidget {
                     endIndent: 16.w,
                   ),
                 ),
-                ...comments.map((comment) {
+                ...topComments.map((comment) {
+                  final replies = _repliesOf(comment, allComments);
                   return _AnimatedCommentTile(
                     key: ValueKey(comment.id),
                     comment: comment,
+                    replies: replies,
+                    onLike: () => cubit.toggleCommentLike(comment.id!),
+                    onDislike: () => cubit.toggleCommentDislike(comment.id!),
+                    onReply: () => onReplyTap(comment),
                   );
                 }),
                 SizedBox(height: 16.h),
@@ -195,8 +225,17 @@ class _FeedContent extends StatelessWidget {
         CommentInput(
           key: commentInputKey,
           isSubmitting: state.isSubmitting,
-          hintText: AppLocalizations.get('addComment', isArabic ? 'ar' : 'en'),
-          onSend: (text) => cubit.addComment(text),
+          hintText:
+              AppLocalizations.get('addComment', isArabic ? 'ar' : 'en'),
+          replyingToUsername: replyingTo?.username,
+          onCancelReply: onCancelReply,
+          onSend: (text) {
+            cubit.addComment(
+              text,
+              parentId: replyingTo?.id,
+            );
+            onCancelReply();
+          },
         ),
       ],
     );
@@ -205,10 +244,18 @@ class _FeedContent extends StatelessWidget {
 
 class _AnimatedCommentTile extends StatefulWidget {
   final CommentModel comment;
+  final List<CommentModel> replies;
+  final VoidCallback onLike;
+  final VoidCallback onDislike;
+  final VoidCallback onReply;
 
   const _AnimatedCommentTile({
     super.key,
     required this.comment,
+    required this.replies,
+    required this.onLike,
+    required this.onDislike,
+    required this.onReply,
   });
 
   @override
@@ -264,9 +311,11 @@ class _AnimatedCommentTileState extends State<_AnimatedCommentTile>
         child: Padding(
           padding: EdgeInsets.only(bottom: 12.h),
           child: CommentTile(
-            username: widget.comment.username,
-            text: widget.comment.text,
-            avatarUrl: widget.comment.avatarUrl,
+            comment: widget.comment,
+            replies: widget.replies,
+            onLike: widget.onLike,
+            onDislike: widget.onDislike,
+            onReply: widget.onReply,
           ),
         ),
       ),
