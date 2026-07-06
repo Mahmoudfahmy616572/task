@@ -45,33 +45,44 @@ class _FeedPageState extends State<FeedPage> {
       child: BlocBuilder<LocaleCubit, LocaleState>(
         builder: (context, localeState) {
           final isArabic = localeState.isArabic;
+          const gradientColors = [
+            Color(0xFFFF7B54),
+            Color(0xFFFF4D6D),
+          ];
           return Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: const Color(0xFFFCFAF8),
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               surfaceTintColor: Colors.transparent,
               elevation: 0,
               scrolledUnderElevation: 0,
-              automaticallyImplyLeading: false,
               flexibleSpace: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFF7F5F2),
-                      Color(0xFFFFFFFF),
-                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: gradientColors,
                   ),
                 ),
               ),
-              toolbarHeight: 48.h,
+              toolbarHeight: 52.h,
+              leading: Padding(
+                padding: EdgeInsetsDirectional.only(start: 8.w),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios_rounded,
+                    size: 20.sp,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {},
+                ),
+              ),
               title: Text(
                 AppLocalizations.get('postTitle', isArabic ? 'ar' : 'en'),
                 style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
               centerTitle: true,
@@ -80,7 +91,7 @@ class _FeedPageState extends State<FeedPage> {
                   icon: Icon(
                     Icons.language_rounded,
                     size: 22.sp,
-                    color: AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                   onPressed: () {
                     context.read<LocaleCubit>().toggle();
