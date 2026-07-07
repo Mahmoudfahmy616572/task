@@ -42,7 +42,9 @@ class _PostImageState extends State<PostImage> {
         child: SizedBox(
           width: imageWidth,
           height: imageHeight,
-          child: AnimatedOpacity(
+          child: Container(
+            color: const Color(0xFFFCFAF8),
+            child: AnimatedOpacity(
             opacity: _loaded ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 300),
             child: Image.asset(
@@ -74,6 +76,7 @@ class _PostImageState extends State<PostImage> {
                   ),
                 );
               },
+            ),
             ),
           ),
         ),

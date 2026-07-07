@@ -15,9 +15,9 @@ class PostRepository {
       username: 'johndoe',
       subtitle: '2026-07-06T15:30:00.000',
       text:
-          'Golden hour at the pier. Absolutely breathtaking views today! '
-          'The weather was perfect for a long walk along the water. '
-          'Sometimes you just need to step back and appreciate the beauty around you.',
+          'The greatest of all time. 5 Ballon d\'Ors, 5 Champions League titles, '
+          'and countless records broken. From Madeira to the world — '
+          'Cristiano Ronaldo, the legend who redefined greatness.',
       imageUrl: 'assets/task.jpeg',
       likesCount: 142,
       isLiked: false,

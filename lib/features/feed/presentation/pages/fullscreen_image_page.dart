@@ -26,13 +26,17 @@ class FullscreenImagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.black,
+      backgroundColor: const Color(0xFFFCFAF8),
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color(0xFFFCFAF8),
+        iconTheme: IconThemeData(color: AppColors.userName),
+        title: Text(
+          '',
+          style: TextStyle(color: AppColors.userName),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.download_rounded, size: 22.sp),
+            icon: Icon(Icons.download_rounded, size: 22.sp, color: AppColors.gradientEnd),
             onPressed: () => _download(context),
           ),
           8.horizontalSpace,
