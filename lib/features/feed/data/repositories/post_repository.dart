@@ -48,4 +48,12 @@ class PostRepository {
       [postId],
     );
   }
+
+  Future<void> decrementCommentsCount(int postId) async {
+    final db = await DatabaseHelper.database;
+    await db.rawUpdate(
+      'UPDATE posts SET commentsCount = MAX(0, commentsCount - 1) WHERE id = ?',
+      [postId],
+    );
+  }
 }

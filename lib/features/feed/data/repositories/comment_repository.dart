@@ -56,6 +56,11 @@ class CommentRepository {
     return updated;
   }
 
+  Future<void> deleteComment(int id) async {
+    final db = await DatabaseHelper.database;
+    await db.delete('comments', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<CommentModel> toggleCommentDislike(CommentModel comment) async {
     final db = await DatabaseHelper.database;
 

@@ -23,6 +23,8 @@ class CommentTile extends StatelessWidget {
   final ValueChanged<int> onLike;
   final ValueChanged<int> onDislike;
   final VoidCallback onReply;
+  final ValueChanged<int>? onDelete;
+  final String currentUsername;
 
   const CommentTile({
     super.key,
@@ -32,6 +34,8 @@ class CommentTile extends StatelessWidget {
     required this.onLike,
     required this.onDislike,
     required this.onReply,
+    this.onDelete,
+    this.currentUsername = 'johndoe',
   });
 
   @override
@@ -144,6 +148,18 @@ class CommentTile extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            if (comment.username == currentUsername && onDelete != null) ...[
+                              8.horizontalSpace,
+                              GestureDetector(
+                                onTap: () => onDelete!(comment.id!),
+                                behavior: HitTestBehavior.opaque,
+                                child: Icon(
+                                  Icons.delete_outline_rounded,
+                                  size: 15.sp,
+                                  color: AppColors.timestampGray,
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ],
@@ -184,6 +200,8 @@ class CommentTile extends StatelessWidget {
                         onLike: onLike,
                         onDislike: onDislike,
                         onReply: onReply,
+                        onDelete: onDelete,
+                        currentUsername: currentUsername,
                       ),
                     )),
               ],

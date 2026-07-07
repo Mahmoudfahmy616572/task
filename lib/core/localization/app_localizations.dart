@@ -17,6 +17,8 @@ abstract final class AppLocalizations {
       'retry': 'Retry',
       'download': 'Download',
       'saved': 'Image saved',
+      'public': 'Public',
+      'private': 'Private',
     },
     'ar': {
       'addComment': 'أضف تعليقاً...',
@@ -26,6 +28,8 @@ abstract final class AppLocalizations {
       'retry': 'إعادة المحاولة',
       'download': 'تحميل',
       'saved': 'تم حفظ الصورة',
+      'public': 'عام',
+      'private': 'خاص',
     },
   };
 

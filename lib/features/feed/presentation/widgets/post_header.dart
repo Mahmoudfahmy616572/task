@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/widgets/avatar_widget.dart';
 
 class PostHeader extends StatelessWidget {
@@ -16,11 +17,12 @@ class PostHeader extends StatelessWidget {
     required this.subtitle,
   });
 
-  String _formatDate(BuildContext context) {
+  String _formatDateTime(BuildContext context) {
     try {
       final date = DateTime.parse(subtitle);
       final locale = Localizations.localeOf(context).languageCode;
-      return DateFormat.yMMMMd(locale).format(date);
+      final formatter = DateFormat.yMMMMd(locale).add_jm();
+      return formatter.format(date);
     } catch (_) {
       return subtitle;
     }
@@ -52,15 +54,45 @@ class PostHeader extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 2.verticalSpace,
-                Text(
-                  _formatDate(context),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.textSecondary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        _formatDateTime(context),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    6.horizontalSpace,
+                    Text(
+                      '•',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    6.horizontalSpace,
+                    Icon(
+                      Icons.public_rounded,
+                      size: 12.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                    3.horizontalSpace,
+                    Text(
+                      AppLocalizations.get('public',
+                          Localizations.localeOf(context).languageCode),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

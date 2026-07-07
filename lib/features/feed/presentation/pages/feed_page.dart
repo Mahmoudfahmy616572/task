@@ -255,6 +255,8 @@ class _FeedContent extends StatelessWidget {
                     onLike: (id) => cubit.toggleCommentLike(id),
                     onDislike: (id) => cubit.toggleCommentDislike(id),
                     onReply: () => onReplyTap(comment),
+                    onDelete: (id) => cubit.deleteComment(id),
+                    currentUsername: 'johndoe',
                   );
                 }),
                 SizedBox(height: 16.h),
@@ -289,6 +291,8 @@ class _AnimatedCommentTile extends StatefulWidget {
   final ValueChanged<int> onLike;
   final ValueChanged<int> onDislike;
   final VoidCallback onReply;
+  final ValueChanged<int>? onDelete;
+  final String currentUsername;
 
   const _AnimatedCommentTile({
     super.key,
@@ -298,6 +302,8 @@ class _AnimatedCommentTile extends StatefulWidget {
     required this.onLike,
     required this.onDislike,
     required this.onReply,
+    this.onDelete,
+    this.currentUsername = 'johndoe',
   });
 
   @override
@@ -359,6 +365,8 @@ class _AnimatedCommentTileState extends State<_AnimatedCommentTile>
             onLike: widget.onLike,
             onDislike: widget.onDislike,
             onReply: widget.onReply,
+            onDelete: widget.onDelete,
+            currentUsername: widget.currentUsername,
           ),
         ),
       ),

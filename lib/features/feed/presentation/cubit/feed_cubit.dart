@@ -103,6 +103,30 @@ class FeedCubit extends Cubit<FeedState> {
     } catch (_) {}
   }
 
+  Future<void> deleteComment(int commentId) async {
+    final current = state;
+    if (current is! FeedLoaded) return;
+
+    try {
+      final idx = current.comments.indexWhere((c) => c.id == commentId);
+      final comment = idx != -1 ? current.comments[idx] : null;
+      await _commentRepository.deleteComment(commentId);
+
+      final updatedComments =
+          current.comments.where((c) => c.id != commentId).toList();
+
+      var updatedPost = current.post;
+      if (comment != null && comment.isTopLevel) {
+        await _postRepository.decrementCommentsCount(current.post.id!);
+        updatedPost = current.post.copyWith(
+          commentsCount: current.post.commentsCount - 1,
+        );
+      }
+
+      emit(current.copyWith(post: updatedPost, comments: updatedComments));
+    } catch (_) {}
+  }
+
   Future<void> toggleCommentDislike(int commentId) async {
     final current = state;
     if (current is! FeedLoaded) return;
