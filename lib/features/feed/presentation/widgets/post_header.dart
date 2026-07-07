@@ -21,8 +21,9 @@ class PostHeader extends StatelessWidget {
     try {
       final date = DateTime.parse(subtitle);
       final locale = Localizations.localeOf(context).languageCode;
-      final formatter = DateFormat.yMMMMd(locale).add_jm();
-      return formatter.format(date);
+      final datePart = DateFormat.yMMMMd(locale).format(date);
+      final timePart = DateFormat.jm(locale).format(date);
+      return '$datePart $timePart';
     } catch (_) {
       return subtitle;
     }

@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/widgets/comment_reaction_button.dart';
 import '../../data/models/comment_model.dart';
-
-String _formatTimestamp(DateTime date) {
-  final now = DateTime.now();
-  final diff = now.difference(date);
-
-  if (diff.inMinutes < 1) return 'الآن';
-  if (diff.inMinutes < 60) return 'منذ ${diff.inMinutes} د';
-  if (diff.inHours < 24) return 'منذ ${diff.inHours} س';
-  if (diff.inDays < 7) return 'منذ ${diff.inDays} ي';
-  return '${date.day}/${date.month}/${date.year}';
-}
 
 class CommentTile extends StatelessWidget {
   final CommentModel comment;
@@ -37,6 +28,28 @@ class CommentTile extends StatelessWidget {
     this.onDelete,
     this.currentUsername = 'johndoe',
   });
+
+  String _formatTimestamp(BuildContext context, DateTime date) {
+    final locale = Localizations.localeOf(context).languageCode;
+    final now = DateTime.now();
+    final diff = now.difference(date);
+
+    if (diff.inMinutes < 1) return AppLocalizations.get('now', locale);
+    if (diff.inMinutes < 60) {
+      return AppLocalizations.get('minutesAgo', locale)
+          .replaceFirst('%d', '${diff.inMinutes}');
+    }
+    if (diff.inHours < 24) {
+      return AppLocalizations.get('hoursAgo', locale)
+          .replaceFirst('%d', '${diff.inHours}');
+    }
+    if (diff.inDays < 7) {
+      return AppLocalizations.get('daysAgo', locale)
+          .replaceFirst('%d', '${diff.inDays}');
+    }
+    final fmt = DateFormat('d/M/yyyy', locale);
+    return fmt.format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +120,7 @@ class CommentTile extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              _formatTimestamp(comment.createdAt),
+                              _formatTimestamp(context, comment.createdAt),
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 11.sp,
@@ -140,7 +153,8 @@ class CommentTile extends StatelessWidget {
                               onTap: onReply,
                               behavior: HitTestBehavior.opaque,
                               child: Text(
-                                'رد',
+                                AppLocalizations.get(
+                                  'reply', Localizations.localeOf(context).languageCode),
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.w600,

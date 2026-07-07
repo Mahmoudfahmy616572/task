@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/extensions/string_extensions.dart';
+import '../../../../core/localization/app_localizations.dart';
 
 class CommentInput extends StatefulWidget {
   final bool isSubmitting;
@@ -109,7 +110,9 @@ class CommentInputState extends State<CommentInput> {
                   6.horizontalSpace,
                   Expanded(
                     child: Text(
-                      'الرد على @${widget.replyingToUsername}',
+                      AppLocalizations.get('replyingTo',
+                              Localizations.localeOf(context).languageCode)
+                          .replaceFirst('%s', widget.replyingToUsername!),
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.w500,

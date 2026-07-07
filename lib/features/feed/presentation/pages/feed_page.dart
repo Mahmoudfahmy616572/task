@@ -235,7 +235,8 @@ class _FeedContent extends StatelessWidget {
                     bottom: 12.h,
                   ),
                   child: Text(
-                    'التعليقات',
+                    AppLocalizations.get('commentsTitle',
+                        Localizations.localeOf(context).languageCode),
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w700,

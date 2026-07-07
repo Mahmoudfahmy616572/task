@@ -8,7 +8,25 @@ class PostRepository {
     final posts = await db.query('posts', limit: 1);
 
     if (posts.isNotEmpty) {
-      return PostModel.fromMap(posts.first);
+      final existing = PostModel.fromMap(posts.first);
+      if (existing.subtitle == 'San Francisco, CA') {
+        const updated = PostModel(
+          username: 'johndoe',
+          subtitle: '2026-07-06T15:30:00.000',
+          text:
+              'The greatest of all time. 5 Ballon d\'Ors, 5 Champions League titles, '
+              'and countless records broken. From Madeira to the world — '
+              'Cristiano Ronaldo, the legend who redefined greatness.',
+          imageUrl: 'assets/task.jpeg',
+          likesCount: 142,
+          isLiked: false,
+          commentsCount: 18,
+        );
+        await db.update('posts', updated.toMap(),
+            where: 'id = ?', whereArgs: [existing.id]);
+        return updated.copyWith(id: existing.id);
+      }
+      return existing;
     }
 
     const initial = PostModel(
