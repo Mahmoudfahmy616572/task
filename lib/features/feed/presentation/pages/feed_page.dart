@@ -199,9 +199,11 @@ class _FeedContent extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.only(top: 8.h),
+          child: ScrollConfiguration(
+            behavior: _NoOverscrollBehavior(),
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              padding: EdgeInsets.only(top: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -264,6 +266,7 @@ class _FeedContent extends StatelessWidget {
               ],
             ),
           ),
+        ),
         ),
         CommentInput(
           key: commentInputKey,
@@ -369,5 +372,13 @@ class _AnimatedCommentTileState extends State<_AnimatedCommentTile>
         ),
       ),
     );
+  }
+}
+
+class _NoOverscrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
   }
 }
