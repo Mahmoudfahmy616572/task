@@ -255,7 +255,6 @@ class _FeedContent extends StatelessWidget {
                     replies: replies,
                     avatarIndex: index,
                     onLike: (id) => cubit.toggleCommentLike(id),
-                    onDislike: (id) => cubit.toggleCommentDislike(id),
                     onReply: () => onReplyTap(comment),
                     onDelete: (id) => cubit.deleteComment(id),
                     currentUsername: 'johndoe',
@@ -291,7 +290,6 @@ class _AnimatedCommentTile extends StatefulWidget {
   final List<CommentModel> replies;
   final int avatarIndex;
   final ValueChanged<int> onLike;
-  final ValueChanged<int> onDislike;
   final VoidCallback onReply;
   final ValueChanged<int>? onDelete;
   final String currentUsername;
@@ -302,7 +300,6 @@ class _AnimatedCommentTile extends StatefulWidget {
     required this.replies,
     required this.avatarIndex,
     required this.onLike,
-    required this.onDislike,
     required this.onReply,
     this.onDelete,
     this.currentUsername = 'johndoe',
@@ -365,7 +362,6 @@ class _AnimatedCommentTileState extends State<_AnimatedCommentTile>
             replies: widget.replies,
             avatarIndex: widget.avatarIndex,
             onLike: widget.onLike,
-            onDislike: widget.onDislike,
             onReply: widget.onReply,
             onDelete: widget.onDelete,
             currentUsername: widget.currentUsername,

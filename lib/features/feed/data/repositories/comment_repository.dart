@@ -44,10 +44,6 @@ class CommentRepository {
       likesCount: comment.isLiked
           ? (comment.likesCount - 1).clamp(0, double.infinity).toInt()
           : comment.likesCount + 1,
-      isDisliked: comment.isDisliked ? false : comment.isDisliked,
-      dislikesCount: comment.isDisliked
-          ? (comment.dislikesCount - 1).clamp(0, double.infinity).toInt()
-          : comment.dislikesCount,
     );
 
     await db.update('comments', updated.toMap(),
@@ -59,25 +55,5 @@ class CommentRepository {
   Future<void> deleteComment(int id) async {
     final db = await DatabaseHelper.database;
     await db.delete('comments', where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<CommentModel> toggleCommentDislike(CommentModel comment) async {
-    final db = await DatabaseHelper.database;
-
-    final updated = comment.copyWith(
-      isDisliked: !comment.isDisliked,
-      dislikesCount: comment.isDisliked
-          ? (comment.dislikesCount - 1).clamp(0, double.infinity).toInt()
-          : comment.dislikesCount + 1,
-      isLiked: comment.isLiked ? false : comment.isLiked,
-      likesCount: comment.isLiked
-          ? (comment.likesCount - 1).clamp(0, double.infinity).toInt()
-          : comment.likesCount,
-    );
-
-    await db.update('comments', updated.toMap(),
-        where: 'id = ?', whereArgs: [comment.id]);
-
-    return updated;
   }
 }

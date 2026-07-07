@@ -127,21 +127,4 @@ class FeedCubit extends Cubit<FeedState> {
     } catch (_) {}
   }
 
-  Future<void> toggleCommentDislike(int commentId) async {
-    final current = state;
-    if (current is! FeedLoaded) return;
-
-    final index = current.comments.indexWhere((c) => c.id == commentId);
-    if (index == -1) return;
-
-    try {
-      final updated =
-          await _commentRepository.toggleCommentDislike(current.comments[index]);
-
-      final updatedComments = [...current.comments];
-      updatedComments[index] = updated;
-
-      emit(current.copyWith(comments: updatedComments));
-    } catch (_) {}
-  }
 }

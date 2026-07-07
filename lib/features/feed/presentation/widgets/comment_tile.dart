@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/localization/app_localizations.dart';
-import '../../../../core/widgets/comment_reaction_button.dart';
 import '../../data/models/comment_model.dart';
 
 class CommentTile extends StatelessWidget {
@@ -12,7 +11,6 @@ class CommentTile extends StatelessWidget {
   final List<CommentModel> replies;
   final int avatarIndex;
   final ValueChanged<int> onLike;
-  final ValueChanged<int> onDislike;
   final VoidCallback onReply;
   final ValueChanged<int>? onDelete;
   final String currentUsername;
@@ -23,7 +21,6 @@ class CommentTile extends StatelessWidget {
     this.replies = const [],
     this.avatarIndex = 0,
     required this.onLike,
-    required this.onDislike,
     required this.onReply,
     this.onDelete,
     this.currentUsername = 'johndoe',
@@ -179,28 +176,10 @@ class CommentTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Column(
-                    children: [
-                      CommentReactionButton(
-                        icon: Icons.thumb_up_outlined,
-                        activeIcon: Icons.thumb_up,
-                        activeColor: AppColors.textPrimary,
-                        inactiveColor: AppColors.timestampGray,
-                        count: comment.likesCount,
-                        isActive: comment.isLiked,
-                        onTap: () => onLike(comment.id!),
-                      ),
-                      4.verticalSpace,
-                      CommentReactionButton(
-                        icon: Icons.thumb_down_outlined,
-                        activeIcon: Icons.thumb_down,
-                        activeColor: AppColors.textPrimary,
-                        inactiveColor: AppColors.timestampGray,
-                        count: comment.dislikesCount,
-                        isActive: comment.isDisliked,
-                        onTap: () => onDislike(comment.id!),
-                      ),
-                    ],
+                  AnimatedHeartButton(
+                    isLiked: comment.isLiked,
+                    count: comment.likesCount,
+                    onChanged: (_) => onLike(comment.id!),
                   ),
                 ],
               ),
@@ -212,7 +191,6 @@ class CommentTile extends StatelessWidget {
                         comment: reply,
                         avatarIndex: avatarIndex + 1,
                         onLike: onLike,
-                        onDislike: onDislike,
                         onReply: onReply,
                         onDelete: onDelete,
                         currentUsername: currentUsername,
@@ -221,6 +199,110 @@ class CommentTile extends StatelessWidget {
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedHeartButton extends StatefulWidget {
+  final bool isLiked;
+  final int count;
+  final ValueChanged<bool> onChanged;
+
+  const AnimatedHeartButton({
+    super.key,
+    required this.isLiked,
+    required this.count,
+    required this.onChanged,
+  });
+
+  @override
+  State<AnimatedHeartButton> createState() => _AnimatedHeartButtonState();
+}
+
+class _AnimatedHeartButtonState extends State<AnimatedHeartButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnim;
+  late Animation<double> _rotationAnim;
+  bool _isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked = widget.isLiked;
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _scaleAnim = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.35), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 1.35, end: 0.9), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 0.9, end: 1.0), weight: 55),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _rotationAnim = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.05), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 0.05, end: -0.03), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: -0.03, end: 0.0), weight: 50),
+    ]).animate(_controller);
+  }
+
+  @override
+  void didUpdateWidget(AnimatedHeartButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _isLiked = widget.isLiked;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTap() {
+    _controller.forward(from: 0);
+    _isLiked = !_isLiked;
+    widget.onChanged(_isLiked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.rotate(
+          angle: _rotationAnim.value,
+          child: Transform.scale(
+            scale: _scaleAnim.value,
+            child: child,
+          ),
+        );
+      },
+      child: GestureDetector(
+        onTap: _handleTap,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              _isLiked ? Icons.favorite : Icons.favorite_border,
+              size: 18.sp,
+              color: _isLiked ? AppColors.gradientEnd : AppColors.timestampGray,
+            ),
+            3.verticalSpace,
+            if (widget.count > 0)
+              Text(
+                '${widget.count}',
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
+                  color: _isLiked
+                      ? AppColors.gradientEnd
+                      : AppColors.timestampGray,
+                ),
+              ),
+          ],
         ),
       ),
     );
