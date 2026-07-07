@@ -162,7 +162,7 @@ class CommentInputState extends State<CommentInput> {
                       textInputAction: TextInputAction.send,
                       maxLines: null,
                       textCapitalization: TextCapitalization.sentences,
-                      textDirection: TextDirection.rtl,
+                      textDirection: Directionality.of(context),
                       decoration: InputDecoration(
                         hintText: widget.hintText,
                         hintStyle: TextStyle(
