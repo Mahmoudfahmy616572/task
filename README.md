@@ -2,6 +2,8 @@
 
 A Flutter social feed app with comments, likes, replies, image viewing, and full RTL/Arabic localization.
 
+<video src="./readme%20task.mp4" controls width="100%" poster="./screenshot.png"></video>
+
 ---
 
 ## Features
