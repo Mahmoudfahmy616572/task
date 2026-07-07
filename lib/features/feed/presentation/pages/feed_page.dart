@@ -200,6 +200,7 @@ class _FeedContent extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: EdgeInsets.only(top: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
