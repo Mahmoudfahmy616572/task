@@ -229,12 +229,29 @@ class _FeedContent extends StatelessWidget {
                     endIndent: 16.w,
                   ),
                 ),
-                ...topComments.map((comment) {
+                Padding(
+                  padding: EdgeInsetsDirectional.only(
+                    start: 16.w,
+                    bottom: 12.h,
+                  ),
+                  child: Text(
+                    'التعليقات',
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.sectionTitle,
+                    ),
+                  ),
+                ),
+                ...topComments.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final comment = entry.value;
                   final replies = _repliesOf(comment, allComments);
                   return _AnimatedCommentTile(
                     key: ValueKey(comment.id),
                     comment: comment,
                     replies: replies,
+                    avatarIndex: index,
                     onLike: () => cubit.toggleCommentLike(comment.id!),
                     onDislike: () => cubit.toggleCommentDislike(comment.id!),
                     onReply: () => onReplyTap(comment),
@@ -268,6 +285,7 @@ class _FeedContent extends StatelessWidget {
 class _AnimatedCommentTile extends StatefulWidget {
   final CommentModel comment;
   final List<CommentModel> replies;
+  final int avatarIndex;
   final VoidCallback onLike;
   final VoidCallback onDislike;
   final VoidCallback onReply;
@@ -276,6 +294,7 @@ class _AnimatedCommentTile extends StatefulWidget {
     super.key,
     required this.comment,
     required this.replies,
+    required this.avatarIndex,
     required this.onLike,
     required this.onDislike,
     required this.onReply,
@@ -336,6 +355,7 @@ class _AnimatedCommentTileState extends State<_AnimatedCommentTile>
           child: CommentTile(
             comment: widget.comment,
             replies: widget.replies,
+            avatarIndex: widget.avatarIndex,
             onLike: widget.onLike,
             onDislike: widget.onDislike,
             onReply: widget.onReply,
