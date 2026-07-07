@@ -20,8 +20,8 @@ class CommentTile extends StatelessWidget {
   final CommentModel comment;
   final List<CommentModel> replies;
   final int avatarIndex;
-  final VoidCallback onLike;
-  final VoidCallback onDislike;
+  final ValueChanged<int> onLike;
+  final ValueChanged<int> onDislike;
   final VoidCallback onReply;
 
   const CommentTile({
@@ -158,7 +158,7 @@ class CommentTile extends StatelessWidget {
                         inactiveColor: AppColors.timestampGray,
                         count: 0,
                         isActive: comment.isLiked,
-                        onTap: onLike,
+                        onTap: () => onLike(comment.id!),
                       ),
                       4.verticalSpace,
                       CommentReactionButton(
@@ -168,7 +168,7 @@ class CommentTile extends StatelessWidget {
                         inactiveColor: AppColors.timestampGray,
                         count: 0,
                         isActive: comment.isDisliked,
-                        onTap: onDislike,
+                        onTap: () => onDislike(comment.id!),
                       ),
                     ],
                   ),

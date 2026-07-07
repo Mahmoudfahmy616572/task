@@ -252,8 +252,8 @@ class _FeedContent extends StatelessWidget {
                     comment: comment,
                     replies: replies,
                     avatarIndex: index,
-                    onLike: () => cubit.toggleCommentLike(comment.id!),
-                    onDislike: () => cubit.toggleCommentDislike(comment.id!),
+                    onLike: (id) => cubit.toggleCommentLike(id),
+                    onDislike: (id) => cubit.toggleCommentDislike(id),
                     onReply: () => onReplyTap(comment),
                   );
                 }),
@@ -286,8 +286,8 @@ class _AnimatedCommentTile extends StatefulWidget {
   final CommentModel comment;
   final List<CommentModel> replies;
   final int avatarIndex;
-  final VoidCallback onLike;
-  final VoidCallback onDislike;
+  final ValueChanged<int> onLike;
+  final ValueChanged<int> onDislike;
   final VoidCallback onReply;
 
   const _AnimatedCommentTile({
