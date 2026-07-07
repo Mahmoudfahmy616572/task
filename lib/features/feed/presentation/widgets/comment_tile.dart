@@ -159,8 +159,8 @@ class CommentTile extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (comment.username == currentUsername && onDelete != null) ...[
-                              8.horizontalSpace,
+                            const Spacer(),
+                            if (comment.username == currentUsername && onDelete != null)
                               GestureDetector(
                                 onTap: () => onDelete!(comment.id!),
                                 behavior: HitTestBehavior.opaque,
@@ -170,7 +170,6 @@ class CommentTile extends StatelessWidget {
                                   color: AppColors.timestampGray,
                                 ),
                               ),
-                            ],
                           ],
                         ),
                       ],
