@@ -60,7 +60,7 @@ class CommentTile extends StatelessWidget {
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                textDirection: TextDirection.rtl,
+                textDirection: Directionality.of(context),
                 children: [
                   Container(
                     width: 38.r,
@@ -71,12 +71,6 @@ class CommentTile extends StatelessWidget {
                           ? AppColors.avatarGreen
                           : AppColors.avatarPink,
                     ),
-                    child: Icon(
-                      isFirst ? Icons.eco_rounded : Icons.local_florist_rounded,
-                      size: 18.sp,
-                      color:
-                          isFirst ? AppColors.iconGreen : AppColors.iconPink,
-                    ),
                   ),
                   12.horizontalSpace,
                   Expanded(
@@ -85,7 +79,7 @@ class CommentTile extends StatelessWidget {
                       children: [
                         Text(
                           comment.username,
-                          textAlign: TextAlign.right,
+                          textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w700,
@@ -97,7 +91,7 @@ class CommentTile extends StatelessWidget {
                         6.verticalSpace,
                         Text(
                           comment.text,
-                          textAlign: TextAlign.right,
+                          textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w400,
@@ -110,7 +104,7 @@ class CommentTile extends StatelessWidget {
                           children: [
                             Text(
                               _formatTimestamp(comment.createdAt),
-                              textAlign: TextAlign.right,
+                              textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 color: AppColors.timestampGray,
