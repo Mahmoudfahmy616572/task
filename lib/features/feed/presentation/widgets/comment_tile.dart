@@ -43,18 +43,18 @@ class CommentTile extends StatelessWidget {
       padding: EdgeInsets.only(
         left: isTopLevel ? 16.w : 44.w,
         right: 16.w,
-        bottom: 12.h,
+        bottom: 14.h,
       ),
       child: Card(
         margin: EdgeInsets.zero,
         elevation: 0.5,
-        shadowColor: Colors.black.withValues(alpha: 0.08),
+        shadowColor: Colors.black.withValues(alpha: 0.06),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14.r),
         ),
-        color: AppColors.commentCardBackground,
+        color: const Color(0xFFFFFFFF),
         child: Padding(
-          padding: EdgeInsets.all(14.r),
+          padding: EdgeInsets.all(16.r),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -63,8 +63,8 @@ class CommentTile extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 children: [
                   Container(
-                    width: 36.r,
-                    height: 36.r,
+                    width: 38.r,
+                    height: 38.r,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isFirst
@@ -78,13 +78,14 @@ class CommentTile extends StatelessWidget {
                           isFirst ? AppColors.iconGreen : AppColors.iconPink,
                     ),
                   ),
-                  10.horizontalSpace,
+                  12.horizontalSpace,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           comment.username,
+                          textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w700,
@@ -93,21 +94,23 @@ class CommentTile extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        4.verticalSpace,
+                        6.verticalSpace,
                         Text(
                           comment.text,
+                          textAlign: TextAlign.right,
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w400,
                             color: AppColors.textPrimary,
-                            height: 1.45,
+                            height: 1.5,
                           ),
                         ),
-                        8.verticalSpace,
+                        10.verticalSpace,
                         Row(
                           children: [
                             Text(
                               _formatTimestamp(comment.createdAt),
+                              textAlign: TextAlign.right,
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 color: AppColors.timestampGray,
@@ -178,7 +181,7 @@ class CommentTile extends StatelessWidget {
                 ],
               ),
               if (replies.isNotEmpty) ...[
-                8.verticalSpace,
+                10.verticalSpace,
                 ...replies.map((reply) => Padding(
                       padding: EdgeInsets.only(bottom: 8.h),
                       child: CommentTile(
